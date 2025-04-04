@@ -1,5 +1,5 @@
 # PROYECTO-LUNCH-UIS TESTCOMMIT
-En el presente repositorio se colocaran los archivos relacionados con el proyecto para el curso de ingeniería de software 1 en el semestre 2024-2.
+En el presente repositorio se colocaran los archivos relacionados con el proyecto para el curso de ingeniería de software 2 en el semestre 2025-1.
 
 # OBJETIVO GENERAL DEL PROYECTO
 Desarrollar una solución software en forma de página web y/o app móvil que automatice el proceso de compra del servicio de "combo saludable" de la Universidad Industrial de Santander, con el fin de mejorar la eficiencia y accesibilidad, reduciendo el tiempo de espera y los inconvenientes asociados al sistema presencial actual.
