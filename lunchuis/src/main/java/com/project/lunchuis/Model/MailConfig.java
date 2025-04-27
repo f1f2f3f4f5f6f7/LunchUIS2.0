@@ -17,7 +17,7 @@ public class MailConfig {
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
         mailSender.setUsername("minewacoundgg@gmail.com");
-        mailSender.setPassword("ryih hpaq ufcx eudo");  // Contraseña de aplicación
+        mailSender.setPassword("tvkg xplg khsg xdkc");  // Contraseña de aplicación
 
         // Propiedades adicionales para STARTTLS
         Properties props = mailSender.getJavaMailProperties();
