@@ -97,7 +97,6 @@ public class BuyService {
 
     public Optional<Buy> updateBuy(Long id, Buy buyDetails) {
         return buyRepository.findById(id).map(buy -> {
-            buy.setValue(buyDetails.getValue());
             buy.setDate(buyDetails.getDate());
             buy.setHour(buyDetails.getHour());
             buy.setDinner(buyDetails.isDinner());

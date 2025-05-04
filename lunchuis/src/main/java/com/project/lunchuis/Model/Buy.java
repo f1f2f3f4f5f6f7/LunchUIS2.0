@@ -20,7 +20,6 @@ public class Buy {
     private Long id;
 
     @PositiveOrZero(message = "El valor debe ser positivo")
-    private int value;
 
     private LocalDate date;
     private LocalTime hour;
