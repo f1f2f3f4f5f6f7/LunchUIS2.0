@@ -1,10 +1,12 @@
 package com.project.lunchuis.Service;
 
 import com.project.lunchuis.Model.Buy;
+import com.project.lunchuis.Model.Combo;
 import com.project.lunchuis.Model.Notification;
 import com.project.lunchuis.Model.QrCode;
 import com.project.lunchuis.Model.Report;
 import com.project.lunchuis.Repository.BuyRepository;
+import com.project.lunchuis.Repository.ComboRepository;
 import com.project.lunchuis.Repository.QrRepository;
 import com.project.lunchuis.Repository.ReportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,57 +32,61 @@ public class BuyService {
     private ReportRepository reportRepository;
 
     @Autowired
-    private QrService qrService;  // Inyectamos el servicio para generar QR
+    private QrService qrService;
+
+    @Autowired
+    private ComboRepository comboRepository;
 
     public Buy createBuy(Buy buy) {
         if (buy.getUser() == null || buy.getUser().getId() == null) {
             throw new IllegalArgumentException("La compra debe estar asociada a un usuario válido");
         }
-    
-        // Asegúrate de que la compra tenga una fecha asignada
+
         if (buy.getDate() == null) {
             throw new IllegalArgumentException("La compra debe tener una fecha asignada");
         }
-    
-        // Buscar si ya existe un reporte con la misma fecha
+
+        if (buy.getCombo() == null || buy.getCombo().getId() == null) {
+            throw new IllegalArgumentException("La compra debe estar asociada a un combo válido");
+        }
+
+        // Buscar y validar que el combo exista
+        Optional<Combo> optionalCombo = comboRepository.findById(buy.getCombo().getId());
+        if (optionalCombo.isEmpty()) {
+            throw new IllegalArgumentException("El combo con ID " + buy.getCombo().getId() + " no existe");
+        }
+        buy.setCombo(optionalCombo.get());
+
+        // Obtener o crear el reporte
         Report report = reportRepository.findByDate(buy.getDate())
                 .stream()
                 .findFirst()
-                .orElse(null);
-    
-        // Si no existe un reporte para esa fecha, creamos uno nuevo
-        if (report == null) {
-            report = new Report();
-            report.setDate(buy.getDate()); // Usa la fecha de la compra
-            report = reportRepository.save(report);
-        }
-    
-        // Asociar el reporte a la compra
+                .orElseGet(() -> {
+                    Report newReport = new Report();
+                    newReport.setDate(buy.getDate());
+                    return reportRepository.save(newReport);
+                });
+
         buy.setReport(report);
-    
-        // Guardamos la compra (Buy) primero
+
+        // Guardar la compra
         Buy savedBuy = buyRepository.save(buy);
-    
-        // Crear y asociar el código QR a la compra
-        QrCode qrCode = qrService.generateQrCode(savedBuy); // Generamos el código QR con el servicio
+
+        // Generar y asociar código QR
+        QrCode qrCode = qrService.generateQrCode(savedBuy);
         savedBuy.setQrcode(qrCode);
-    
-        // Guardamos el QrCode
         qrRepository.save(qrCode);
-    
-        // Crear y guardar la notificación
+
+        // Crear y enviar notificación
         Notification notification = new Notification();
         notification.setDate(LocalDate.now());
         notification.setMessage("Gracias por tu compra. ID: " + savedBuy.getId());
         notificationService.createNotification(notification, savedBuy.getUser().getId());
-    
-        // Enviar la notificación por correo electrónico
         notificationService.sendNotification(notification);
-    
+
         return savedBuy;
     }
-    
-    
+
     public List<Buy> getAllBuys() {
         return buyRepository.findAll();
     }
@@ -98,6 +104,10 @@ public class BuyService {
             buy.setLunch(buyDetails.isLunch());
             buy.setMonthly(buyDetails.isMonthly());
 
+            if (buyDetails.getCombo() != null && buyDetails.getCombo().getId() != null) {
+                comboRepository.findById(buyDetails.getCombo().getId()).ifPresent(buy::setCombo);
+            }
+
             if (buyDetails.getQrcode() != null) {
                 buy.setQrcode(buyDetails.getQrcode());
             }
@@ -107,6 +117,7 @@ public class BuyService {
             if (buyDetails.getUser() != null) {
                 buy.setUser(buyDetails.getUser());
             }
+
             return buyRepository.save(buy);
         });
     }

@@ -33,20 +33,27 @@ public class Buy {
     @OneToOne(mappedBy = "buy", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonIgnore
     private QrCode qrcode;
+
     public void setQrcode(QrCode qrcode) {
         this.qrcode = qrcode;
         if (qrcode != null) {
             qrcode.setBuy(this);
         }
     }
+
     // Relación con Report
     @ManyToOne
-    @JoinColumn(name = "report_id", nullable = false) // Campo report_id en la base de datos
+    @JoinColumn(name = "report_id", nullable = false)
     @JsonIgnore
     private Report report;
 
     // Relación con User
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false) // Campo user_id en la base de datos
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    // ✅ Nueva relación con Combo
+    @ManyToOne
+    @JoinColumn(name = "combo_id", nullable = false)
+    private Combo combo;
 }
