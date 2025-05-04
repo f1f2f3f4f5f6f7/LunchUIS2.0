@@ -51,7 +51,6 @@ public class Buy {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // ✅ Nueva relación con Combo
     @ManyToOne
     @JoinColumn(name = "combo_id", nullable = false)
     private Combo combo;
