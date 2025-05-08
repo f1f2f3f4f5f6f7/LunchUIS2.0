@@ -29,25 +29,35 @@
       <h1 class="textInfo2" style="font-size: 30px;">Modulo Administrador</h1>
     </div>
   
-    <div *ngIf="seccionVisible === 'menu'" class="info-container" style="margin-top: 2%;">
-      <h2 class="textInfo2 text-center">Gestión de Menús</h2>
-      <div class="row">
-        <div class="col-md-4">
-          <label class="textInfo2">Servicio</label>
-          <select class="form-control" [(ngModel)]="servicioSeleccionado">
-            <option value="almuerzo">Almuerzo</option>
-            <option value="cena">Cena</option>
-          </select>
-        </div>
-        <div class="col-md-4">
-          <label class="textInfo2">Día</label>
-          <input type="date" class="form-control" [(ngModel)]="fechaSeleccionada">
-        </div>
-        <div class="col-md-4 colBoton">
-          <button class="btn-login mt-4" (click)="confirmarMenu()">Confirmar</button>
-        </div>
-      </div>
+<!-- Fragmento actualizado en administrative.component.html -->
+<div *ngIf="seccionVisible === 'menu'" class="info-container" style="margin-top: 2%;">
+  <h2 class="textInfo2 text-center">Gestión de Menús</h2>
+  <div class="row">
+    <div class="col-md-4">
+      <label class="textInfo2">Servicio</label>
+      <select class="form-control" [(ngModel)]="servicioSeleccionado">
+        <option value="almuerzo">Almuerzo</option>
+        <option value="cena">Cena</option>
+      </select>
     </div>
+    <div class="col-md-4">
+      <label class="textInfo2">Día</label>
+      <input type="date" class="form-control" [(ngModel)]="fechaSeleccionada">
+    </div>
+    <div class="col-md-4 colBoton">
+      <button class="btn-login mt-4" (click)="confirmarMenu()">Confirmar</button>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col-md-12">
+      <label class="textInfo2">Seleccionar Combo del Día</label>
+      <select class="form-control" [(ngModel)]="comboSeleccionado">
+        <option *ngFor="let combo of obtenerCombosPorServicio()" [value]="combo">{{ combo }}</option>
+      </select>
+    </div>
+  </div>
+</div>
+
   
     <div *ngIf="seccionVisible === 'cupos'">
       <div class="row" style="margin-top: 5%;">

@@ -206,4 +206,15 @@ nav.navbar {
     color: #d9d9d9;
     font-weight: bold;
   }
+  .container {
+    max-width: 500px;
+  }
+  
+  h2 {
+    text-align: center;
+  }
+  
+  button {
+    width: 100%;
+  }
   
