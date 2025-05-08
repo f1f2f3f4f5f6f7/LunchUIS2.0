@@ -11,6 +11,7 @@
         <div *ngIf="mostrarMenu" class="dropdown-menu-custom">
             <button class="btn-login me-2" (click)="mostrarSeccion('menu')">Gestión de Menús</button>
             <button class="btn-login me-2" (click)="mostrarSeccion('cupos')">Gestión de Cupos</button>
+            <button class="btn-login me-2" (click)="mostrarSeccion('creacion')">Creacion Menús</button>
         </div> 
   
         <button class="btn_lunch me-2" type="button" id="notificationButton" disabled>
@@ -29,10 +30,18 @@
       <h1 class="textInfo2" style="font-size: 30px;">Modulo Administrador</h1>
     </div>
   
-<!-- Fragmento actualizado en administrative.component.html -->
+<!-- Fragmento de asignacion de menus -->
 <div *ngIf="seccionVisible === 'menu'" class="info-container" style="margin-top: 2%;">
   <h2 class="textInfo2 text-center">Gestión de Menús</h2>
   <div class="row">
+    <div class="col md-4">
+        <div class="col-md-12">
+          <label class="textInfo2">Seleccionar Combo del Día</label>
+          <select class="form-control" [(ngModel)]="comboSeleccionado">
+            <option *ngFor="let combo of obtenerCombosPorServicio()" [value]="combo">{{ combo }}</option>
+          </select>
+        </div>
+      </div>
     <div class="col-md-4">
       <label class="textInfo2">Servicio</label>
       <select class="form-control" [(ngModel)]="servicioSeleccionado">
@@ -48,17 +57,43 @@
       <button class="btn-login mt-4" (click)="confirmarMenu()">Confirmar</button>
     </div>
   </div>
-  <div class="row mt-4">
-    <div class="col-md-12">
-      <label class="textInfo2">Seleccionar Combo del Día</label>
-      <select class="form-control" [(ngModel)]="comboSeleccionado">
-        <option *ngFor="let combo of obtenerCombosPorServicio()" [value]="combo">{{ combo }}</option>
-      </select>
-    </div>
-  </div>
+  
 </div>
 
+
+
+<!-- Fragmento de la parte de creacion de menus -->
+<div *ngIf="seccionVisible === 'creacion'" class="info-container" style="margin-top: 2%;">
+    <h2 class="textInfo2 text-center">Creación de Menú</h2>
   
+    <div class="row">
+      <div class="col-md-6">
+        <label class="textInfo2 text-start">Nombre del Menú</label> <!-- Alineación a la izquierda -->
+        <input type="text" class="form-control" [(ngModel)]="nuevoMenu.nombre" placeholder="">
+      </div>
+      <div class="col-md-6">
+        <label class="textInfo2 text-start">Descripción</label> <!-- Alineación a la izquierda -->
+        <input type="text" class="form-control" [(ngModel)]="nuevoMenu.descripcion" placeholder="">
+      </div>
+    </div>
+  
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <label class="textInfo2 text-start">Foto del Menú</label> <!-- Alineación a la izquierda -->
+        <input type="file" class="form-control" (change)="onImageSelected($event)">
+      </div>
+      <div class="col-md-6 d-flex align-items-end">
+        <button class="btn-login mt-4" (click)="confirmarCreacionMenu()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+  
+
+
+
+
+
+<!-- Fragmento de la parte de asignación de cupos -->
     <div *ngIf="seccionVisible === 'cupos'">
       <div class="row" style="margin-top: 5%;">
         <div class="col-4">

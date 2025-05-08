@@ -3,6 +3,7 @@ import { PurchaseValue } from '../purchase-value';
 import { PurchaseValueService } from '../purchase-value.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
+import { MenuService } from '../menu.service';
 
 @Component({
   selector: 'app-administrative',
@@ -19,25 +20,29 @@ export class AdministrativeComponent {
   seccionVisible: string = 'cupos';
 
   // Menús
-// Menús
-mostrarMenu = false;
-servicioSeleccionado: string = '';
-diaSeleccionado: string = '';
-comboSeleccionado: string = '';
-fechaSeleccionada: string = ''; // 👈 AÑADE ESTA LÍNEA
-
+  mostrarMenu = false;
+  servicioSeleccionado: string = '';
+  diaSeleccionado: string = '';
+  comboSeleccionado: string = '';
+  fechaSeleccionada: string = '';
 
   // Combos
   combosAlmuerzo: string[] = ['Arroz con Pollo', 'Pasta Boloñesa', 'Lentejas con Carne'];
   combosCena: string[] = ['Sándwich de Pollo', 'Sopa de Verduras', 'Tortilla con Arroz'];
-
-  // Días disponibles
   dias: string[] = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
 
+  // Crear Menú
+  nuevoMenu = {
+    nombre: '',
+    descripcion: '',
+    imagen: null as File | null
+  };
+
   constructor(
+    private menuService: MenuService,
     private purchaseValueService: PurchaseValueService,
     private router: Router,
-    private authService: AuthService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -68,6 +73,29 @@ fechaSeleccionada: string = ''; // 👈 AÑADE ESTA LÍNEA
 
     console.log(`Servicio: ${this.servicioSeleccionado}, Día: ${this.diaSeleccionado}, Combo: ${this.comboSeleccionado}`);
     alert(`Asignación creada para ${this.servicioSeleccionado} el día ${this.diaSeleccionado} con el combo: ${this.comboSeleccionado}`);
+  }
+
+  confirmarCreacionMenu(): void {
+    if (!this.nuevoMenu.nombre || !this.nuevoMenu.descripcion || !this.nuevoMenu.imagen) {
+      alert('Por favor, completa todos los campos.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('nombre', this.nuevoMenu.nombre);
+    formData.append('descripcion', this.nuevoMenu.descripcion);
+    formData.append('imagen', this.nuevoMenu.imagen);
+
+    this.menuService.crearMenu(formData).subscribe({
+      next: (res) => {
+        alert('Menú creado correctamente');
+        this.nuevoMenu = { nombre: '', descripcion: '', imagen: null };
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Error al crear el menú');
+      }
+    });
   }
 
   verMenusCreados(): void {
@@ -111,5 +139,13 @@ fechaSeleccionada: string = ''; // 👈 AÑADE ESTA LÍNEA
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  // Método para manejar la imagen seleccionada desde el input file
+  onImageSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.nuevoMenu.imagen = file;
+    }
   }
 }
