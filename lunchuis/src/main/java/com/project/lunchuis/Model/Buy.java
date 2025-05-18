@@ -19,8 +19,6 @@ public class Buy {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @PositiveOrZero(message = "El valor debe ser positivo")
-
     private LocalDate date;
     private LocalTime hour;
 
