@@ -1,98 +1,179 @@
 <nav class="navbar navbar-light bg-grey">
     <div class="d-flex align-items-center" style="position: relative; width: 100%;">
-        <button class="btn_lunch me-3" type="button" id="toggleButton" disabled (click)="logout()">
-            <!-- <img src="Logos/Lunch-removebg-preview.png" alt="Logo" style="width: 50px; height: auto;"> -->
+      <button class="btn_lunch me-3" type="button" id="toggleButton" disabled (click)="logout()">
+        <!-- <img src="Logos/Lunch-removebg-preview.png" alt="Logo" style="width: 50px; height: auto;"> -->
+      </button>
+  
+      <span class="navbar-text" id="lunchUIS">Lunch UIS</span>
+  
+      <div class="ms-auto d-flex align-items-center" style="position: relative;">
+        <button class="btn-login me-3" (click)="toggleMenu()">Menú</button>
+        <div *ngIf="mostrarMenu" class="dropdown-menu-custom">
+            <button class="btn-login me-2" (click)="mostrarSeccion('menu')">Gestión de Menús</button>
+            <button class="btn-login me-2" (click)="mostrarSeccion('cupos')">Gestión de Cupos</button>
+            <button class="btn-login me-2" (click)="mostrarSeccion('creacion')">Creacion Menús</button>
+        </div> 
+  
+        <button class="btn_lunch me-2" type="button" id="notificationButton" disabled>
+          <!-- <img src="Images/campana-removebg-preview.png" alt="Notificaciones" style="width: 27px; height: auto;"> -->
         </button>
-
-        <span class="navbar-text" id="lunchUIS">Lunch UIS</span>
-
-        <div class="ms-auto d-flex align-items-center">
-            <button class="btn_lunch me-2" type="button" id="notificationButton" disabled>
-                <!-- <img src="Images/campana-removebg-preview.png" alt="Notificaciones" style="width: 27px; height: auto;"> -->
-            </button>
-
-            <button class="btn_lunch" type="button" id="profileButton" disabled>
-                <!-- <img src="Images/foto perfil.png" alt="Perfil" style="width: 40px; height: auto;"> -->
-            </button>
-        </div>
+  
+        <button class="btn_lunch" type="button" id="profileButton" disabled>
+          <!-- <img src="Images/foto perfil.png" alt="Perfil" style="width: 40px; height: auto;"> -->
+        </button>
+      </div>
     </div>
-</nav>
-<div class="container-fluid centered-rectangle">
+  </nav>
+  
+  <div class="container-fluid centered-rectangle">
     <div class="row" style="margin-top: 3%;">
-        <h1 class="textInfo2" style="font-size: 30px;">Modulo Administrador</h1>
+      <h1 class="textInfo2" style="font-size: 30px;">Modulo Administrador</h1>
     </div>
-    <div class="row" style="margin-top: 5%;">
-        <div class="col-4">
-            <h2 class="textInfo2">Cupos Disponibles</h2>
+  
+<!-- Fragmento de asignacion de menus -->
+<div *ngIf="seccionVisible === 'menu'" class="info-container" style="margin-top: 2%;">
+  <h2 class="textInfo2 text-center">Gestión de Menús</h2>
+  <div class="row">
+    <div class="col md-4">
+        <div class="col-md-12">
+          <label class="textInfo2">Seleccionar Combo del Día</label>
+          <select class="form-control" [(ngModel)]="comboSeleccionado">
+            <option *ngFor="let combo of obtenerCombosPorServicio()" [value]="combo">{{ combo }}</option>
+          </select>
         </div>
-        <div class="col-4">
-            <h2 class="textInfo2">Almuerzo</h2>
-        </div>
-        <div class="col-4">
-            <h2 class="textInfo2">Cena</h2>
-        </div>
+      </div>
+    <div class="col-md-4">
+      <label class="textInfo2">Servicio</label>
+      <select class="form-control" [(ngModel)]="servicioSeleccionado">
+        <option value="almuerzo">Almuerzo</option>
+        <option value="cena">Cena</option>
+      </select>
     </div>
+    <div class="col-md-4">
+      <label class="textInfo2">Día</label>
+      <input type="date" class="form-control" [(ngModel)]="fechaSeleccionada">
+    </div>
+    <div class="col-md-4 colBoton">
+      <button class="btn-login mt-4" (click)="confirmarMenu()">Confirmar</button>
+    </div>
+  </div>
+  
+</div>
+
+
+
+<!-- Fragmento de la parte de creacion de menus -->
+<div *ngIf="seccionVisible === 'creacion'" class="info-container" style="margin-top: 2%;">
+    <h2 class="textInfo2 text-center">Creación de Menú</h2>
+  
     <div class="row">
-        <div class="col-4">
-            <h2 class="textInfo2">Diario</h2>
-        </div>
-        <div class="col-4">
-            <input type="number" class="form-control" id="username" placeholder="{{purchase?.cantidadDiaria}}" [(ngModel)]="cantidadDia" name="cantidadDia">
-        </div>
-        <div class="col-4">
-            <input type="number" class="form-control" id="username" placeholder="{{purchase?.cantidadCena}}"  [(ngModel)]="cantidadCena" name="cantidadCena">
-        </div>
+      <div class="col-md-6">
+        <label class="textInfo2 text-start">Nombre del Menú</label> <!-- Alineación a la izquierda -->
+        <input type="text" class="form-control" [(ngModel)]="nuevoMenu.nombre" placeholder="">
+      </div>
+      <div class="col-md-6">
+        <label class="textInfo2 text-start">Descripción</label> <!-- Alineación a la izquierda -->
+        <input type="text" class="form-control" [(ngModel)]="nuevoMenu.descripcion" placeholder="">
+      </div>
     </div>
-    <div class="row">
+  
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <label class="textInfo2 text-start">Foto del Menú</label> <!-- Alineación a la izquierda -->
+        <input type="file" class="form-control" (change)="onImageSelected($event)">
+      </div>
+      <div class="col-md-6 d-flex align-items-end">
+        <button class="btn-login mt-4" (click)="confirmarCreacionMenu()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+  
+
+
+
+
+
+<!-- Fragmento de la parte de asignación de cupos -->
+    <div *ngIf="seccionVisible === 'cupos'">
+      <div class="row" style="margin-top: 5%;">
         <div class="col-4">
-            <h2 class="textInfo2">Mensual</h2>
+          <h2 class="textInfo2">Cupos Disponibles</h2>
         </div>
         <div class="col-4">
-            <input type="number" class="form-control" id="username" placeholder="{{purchase?.cantidadMensual}}"  [(ngModel)]="cantidadMes" name="cantidadMes">
+          <h2 class="textInfo2">Almuerzo</h2>
+        </div>
+        <div class="col-4">
+          <h2 class="textInfo2">Cena</h2>
+        </div>
+      </div>
+  
+      <div class="row">
+        <div class="col-4">
+          <h2 class="textInfo2">Diario</h2>
+        </div>
+        <div class="col-4">
+          <input type="number" class="form-control" id="username" placeholder="{{purchase?.cantidadDiaria}}" [(ngModel)]="cantidadDia" name="cantidadDia">
+        </div>
+        <div class="col-4">
+          <input type="number" class="form-control" id="username" placeholder="{{purchase?.cantidadCena}}" [(ngModel)]="cantidadCena" name="cantidadCena">
+        </div>
+      </div>
+  
+      <div class="row">
+        <div class="col-4">
+          <h2 class="textInfo2">Mensual</h2>
+        </div>
+        <div class="col-4">
+          <input type="number" class="form-control" id="username" placeholder="{{purchase?.cantidadMensual}}" [(ngModel)]="cantidadMes" name="cantidadMes">
         </div>
         <div class="col-4 colBoton">
-            <div>
-                <button class="btn-login" id="btnIniciarSesion" (click)="actualizar()">Modificar</button>
-            </div>
+          <div>
+            <button class="btn-login" id="btnIniciarSesion" (click)="actualizar()">Modificar</button>
+          </div>
         </div>
-    </div>
-    <div class="row" style="margin-top: 5%;">
+      </div>
+  
+      <div class="row" style="margin-top: 5%;">
         <h1 class="textInfo2" style="font-size: 30px;">Reporte de Ventas</h1>
-    </div>
-    <div class="row" style="margin-top: 5%;">
+      </div>
+  
+      <div class="row" style="margin-top: 5%;">
         <div class="col-3">
-            <h2 class="textInfo2">Fecha Inicio</h2>
+          <h2 class="textInfo2">Fecha Inicio</h2>
         </div>
         <div class="col-3">
-            <input type="text" class="form-control" id="username" placeholder="DD-MM-AAAA">
+          <input type="text" class="form-control" placeholder="DD-MM-AAAA">
         </div>
         <div class="col-3">
-            <h2 class="textInfo2">Fecha Fin</h2>
+          <h2 class="textInfo2">Fecha Fin</h2>
         </div>
         <div class="col-3">
-            <input type="text" class="form-control" id="username" placeholder="DD-MM-AAAA">
+          <input type="text" class="form-control" placeholder="DD-MM-AAAA">
         </div>
-    </div>
-    <div class="row">
+      </div>
+  
+      <div class="row">
         <div class="col-4">
-            <h2 class="textInfo2">Seleccione Servicio</h2>
+          <h2 class="textInfo2">Seleccione Servicio</h2>
         </div>
         <div class="col-4">
-            <div class="row seleccion">
-                <label for="opcion1">
-                    <span class="textInfo2">Almuerzo</span>
-                    <input class="checkbox" type="checkbox" id="opcion1" value="opcion1">
-                </label>
-            </div>
-            <div class="row seleccion">
-                <label for="opcion2">
-                    <span class="textInfo2">Cena</span>
-                    <input class="checkbox" type="checkbox" id="opcion2" value="opcion2" disabled>
-                </label>
-            </div>
+          <div class="row seleccion">
+            <label for="opcion1">
+              <span class="textInfo2">Almuerzo</span>
+              <input class="checkbox" type="checkbox" id="opcion1" value="opcion1">
+            </label>
+          </div>
+          <div class="row seleccion">
+            <label for="opcion2">
+              <span class="textInfo2">Cena</span>
+              <input class="checkbox" type="checkbox" id="opcion2" value="opcion2" disabled>
+            </label>
+          </div>
         </div>
-        <div class="col-4 colBoton" >
-            <button class="btn-login" id="btnIniciarSesion">Generar</button>
+        <div class="col-4 colBoton">
+          <button class="btn-login" id="btnIniciarSesion">Generar</button>
         </div>
+      </div>
     </div>
-</div>
+  </div>
+  
