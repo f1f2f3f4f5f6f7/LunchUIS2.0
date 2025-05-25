@@ -27,8 +27,7 @@ export class AdministrativeComponent {
   fechaSeleccionada: string = '';
 
   // Combos
-  combosAlmuerzo: string[] = ['Arroz con Pollo', 'Pasta Boloñesa', 'Lentejas con Carne'];
-  combosCena: string[] = ['Sándwich de Pollo', 'Sopa de Verduras', 'Tortilla con Arroz'];
+  combos: any[] = [];
   dias: string[] = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
 
   // Crear Menú
@@ -47,6 +46,7 @@ export class AdministrativeComponent {
 
   ngOnInit() {
     this.obtenerDefaultValuesLocalStorage();
+    this.cargarCombosDesdeBackend(); //para cargar los combos desde el backend
   }
 
   mostrarSeccion(seccion: string): void {
@@ -57,23 +57,54 @@ export class AdministrativeComponent {
     this.mostrarMenu = !this.mostrarMenu;
   }
 
-  obtenerCombosPorServicio(): string[] {
-    return this.servicioSeleccionado === 'almuerzo'
-      ? this.combosAlmuerzo
-      : this.servicioSeleccionado === 'cena'
-        ? this.combosCena
-        : [];
-  }
-
-  confirmarMenu(): void {
-    if (!this.servicioSeleccionado || !this.diaSeleccionado || !this.comboSeleccionado) {
-      alert('Por favor seleccione un servicio, un día y un combo.');
-      return;
+  // Logica para cargar los combos desde el backend
+  cargarCombosDesdeBackend(): void {
+  this.menuService.obtenerCombos().subscribe({
+    next: (res) => {
+      console.log('Combos obtenidos:', res);
+      this.combos = res;
+    },
+    error: (err) => {
+      console.error('Error al obtener combos:', err);
+      alert('Error al obtener combos del backend.');
     }
+  });
+}
 
-    console.log(`Servicio: ${this.servicioSeleccionado}, Día: ${this.diaSeleccionado}, Combo: ${this.comboSeleccionado}`);
-    alert(`Asignación creada para ${this.servicioSeleccionado} el día ${this.diaSeleccionado} con el combo: ${this.comboSeleccionado}`);
+
+  // ver todos los combos sin que joda por el servicio
+  obtenerCombosPorServicio(): any[] {
+  return this.combos;
+}
+
+
+  //actualizacion del confirmar menu que no tenia nada de logica
+  confirmarMenu(): void {
+  if (!this.servicioSeleccionado || !this.fechaSeleccionada || !this.comboSeleccionado) {
+    alert('Por favor seleccione un servicio, un día y un combo.');
+    return;
   }
+
+  // Llamada real al backend para obtener los combos
+  this.menuService.obtenerCombos().subscribe({
+    next: (res) => {
+      console.log('Combos obtenidos:', res);
+
+      // Buscar el combo seleccionado en la respuesta
+      const comboEncontrado = res.find((combo: any) => combo.name === this.comboSeleccionado);
+
+      if (comboEncontrado) {
+        alert(`Asignación creada para ${this.servicioSeleccionado} el día ${this.fechaSeleccionada} con el combo: ${comboEncontrado.name}`);
+      } else {
+        alert('No se encontró el combo seleccionado en la lista del backend.');
+      }
+    },
+    error: (err) => {
+      console.error('Error al obtener combos:', err);
+      alert('Error al obtener combos del backend.');
+    }
+  });
+}
 
   confirmarCreacionMenu(): void {
 

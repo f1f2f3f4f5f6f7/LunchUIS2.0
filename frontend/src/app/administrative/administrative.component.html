@@ -38,7 +38,7 @@
         <div class="col-md-12">
           <label class="textInfo2">Seleccionar Combo del Día</label>
           <select class="form-control" [(ngModel)]="comboSeleccionado">
-            <option *ngFor="let combo of obtenerCombosPorServicio()" [value]="combo">{{ combo }}</option>
+            <option *ngFor="let combo of obtenerCombosPorServicio()" [value]="combo.name">{{ combo.name }}</option>
           </select>
         </div>
       </div>
