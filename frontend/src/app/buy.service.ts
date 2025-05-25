@@ -8,7 +8,7 @@ import { Observable, tap } from 'rxjs';
 })
 export class BuyService {
 
-  private basedURL ='http://localhost:8080/api/buy';
+  private basedURL ='http://localhost/api/buy';
   constructor(private httpClient: HttpClient) {}
 
   registrarCompra(compra:Buy): Observable<any> {

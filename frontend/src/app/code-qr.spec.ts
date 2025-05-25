@@ -1,7 +1,7 @@
-import { CodeQr } from './code-qr';
+import { QrCode } from './code-qr';
 
 describe('CodeQr', () => {
   it('should create an instance', () => {
-    expect(new CodeQr()).toBeTruthy();
+    expect(new QrCode()).toBeTruthy();
   });
 });
