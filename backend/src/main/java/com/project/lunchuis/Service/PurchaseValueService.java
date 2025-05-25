@@ -34,9 +34,6 @@ public class PurchaseValueService {
             updatedPurchaseValue.setCantidadDiaria(purchaseValue.getCantidadDiaria());
             updatedPurchaseValue.setCantidadMensual(purchaseValue.getCantidadMensual());
             updatedPurchaseValue.setCantidadCena(purchaseValue.getCantidadCena());
-            updatedPurchaseValue.setValorDiario(purchaseValue.getValorDiario());
-            updatedPurchaseValue.setValorMensual(purchaseValue.getValorMensual());
-            updatedPurchaseValue.setValorCena(purchaseValue.getValorCena());
 
             return purchaseValueRepository.save(updatedPurchaseValue);
         }

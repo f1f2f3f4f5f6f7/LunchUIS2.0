@@ -14,9 +14,6 @@ public class PurchaseValue {
     private Integer cantidadDiaria;
     private Integer cantidadMensual;
     private Integer cantidadCena;
-    private Double valorDiario;
-    private Double valorMensual;
-    private Double valorCena;
 
     public PurchaseValue() {
     }
@@ -25,9 +22,6 @@ public class PurchaseValue {
         this.cantidadDiaria = cantidadDiaria;
         this.cantidadMensual = cantidadMensual;
         this.cantidadCena = cantidadCena;
-        this.valorDiario = valorDiario;
-        this.valorMensual = valorMensual;
-        this.valorCena = valorCena;
     }
 
     // Getters y Setters
@@ -63,27 +57,5 @@ public class PurchaseValue {
         this.cantidadCena = cantidadCena;
     }
 
-    public Double getValorDiario() {
-        return valorDiario;
-    }
 
-    public void setValorDiario(Double valorDiario) {
-        this.valorDiario = valorDiario;
-    }
-
-    public Double getValorMensual() {
-        return valorMensual;
-    }
-
-    public void setValorMensual(Double valorMensual) {
-        this.valorMensual = valorMensual;
-    }
-
-    public Double getValorCena() {
-        return valorCena;
-    }
-
-    public void setValorCena(Double valorCena) {
-        this.valorCena = valorCena;
-    }
 }

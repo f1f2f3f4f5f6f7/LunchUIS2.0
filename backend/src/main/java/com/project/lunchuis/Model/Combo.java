@@ -11,7 +11,7 @@ public class Combo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;         // Ej: "Combo saludable", "Vegetariano"
+    private String name;         // Ej: "Combo saludable" o "Vegetariano"
     private String description;  // Detalles si los necesitas
     private int price;           // Precio del combo (plato)
     
