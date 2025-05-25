@@ -79,8 +79,8 @@
   
     <div class="row mt-4">
       <div class="col-md-6">
-        <label class="textInfo2 text-start">Foto del Menú</label> <!-- Alineación a la izquierda -->
-        <input type="file" class="form-control" (change)="onImageSelected($event)">
+        <label class="textInfo2 text-start">Precio</label> <!-- Alineación a la izquierda -->
+        <input type="number" class="form-control" [(ngModel)]="nuevoMenu.precio" placeholder="">
       </div>
       <div class="col-md-6 d-flex align-items-end">
         <button class="btn-login mt-4" (click)="confirmarCreacionMenu()">Confirmar</button>

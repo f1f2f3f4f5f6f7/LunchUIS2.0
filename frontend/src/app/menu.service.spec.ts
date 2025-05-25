@@ -9,8 +9,14 @@ export class MenuService {
 
   constructor(private http: HttpClient) { }
 
-  crearMenu(menuData: FormData): Observable<any> {
-    return this.http.post('http://localhost/api/menus', menuData);
+  crearMenu(menuData: any): Observable<any> {
+    // Aquí enviamos como JSON, no FormData
+    return this.http.post('http://localhost/api/combos', menuData, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
   }
 }
+
 

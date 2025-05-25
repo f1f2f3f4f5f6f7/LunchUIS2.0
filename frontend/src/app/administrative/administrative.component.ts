@@ -35,7 +35,7 @@ export class AdministrativeComponent {
   nuevoMenu = {
     nombre: '',
     descripcion: '',
-    imagen: null as File | null
+    precio: 0,
   };
 
   constructor(
@@ -76,27 +76,34 @@ export class AdministrativeComponent {
   }
 
   confirmarCreacionMenu(): void {
-    if (!this.nuevoMenu.nombre || !this.nuevoMenu.descripcion || !this.nuevoMenu.imagen) {
+
+    // Validación de campos
+    if (!this.nuevoMenu.nombre || !this.nuevoMenu.descripcion || !this.nuevoMenu.precio) 
+      {
       alert('Por favor, completa todos los campos.');
       return;
-    }
+      }
+    //Declaración del cuerpo de la solicitud para el formato JSON
+    const body = {
+      name: this.nuevoMenu.nombre,
+      description: this.nuevoMenu.descripcion,
+      price: this.nuevoMenu.precio
+    };
 
-    const formData = new FormData();
-    formData.append('nombre', this.nuevoMenu.nombre);
-    formData.append('descripcion', this.nuevoMenu.descripcion);
-    formData.append('imagen', this.nuevoMenu.imagen);
-
-    this.menuService.crearMenu(formData).subscribe({
+    // Llamada al servicio para crear el menú
+    this.menuService.crearMenu(body).subscribe({
       next: (res) => {
         alert('Menú creado correctamente');
-        this.nuevoMenu = { nombre: '', descripcion: '', imagen: null };
+        // Limpiar el formulario después de crear el menú
+        this.nuevoMenu = { nombre: '', descripcion: '', precio: 0 };
       },
       error: (err) => {
-        console.error(err);
+        console.error('Error al crear el menú:', err);
         alert('Error al crear el menú');
       }
     });
-  }
+}
+
 
   verMenusCreados(): void {
     alert('Aquí se mostrarán los menús creados.');
@@ -139,14 +146,6 @@ export class AdministrativeComponent {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
-  }
-
-  // Método para manejar la imagen seleccionada desde el input file
-  onImageSelected(event: any): void {
-    const file = event.target.files[0];
-    if (file) {
-      this.nuevoMenu.imagen = file;
-    }
   }
 }
 
