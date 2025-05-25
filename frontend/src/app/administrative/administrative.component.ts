@@ -47,6 +47,7 @@ export class AdministrativeComponent {
   ngOnInit() {
     this.obtenerDefaultValuesLocalStorage();
     this.cargarCombosDesdeBackend(); //para cargar los combos desde el backend
+
   }
 
   mostrarSeccion(seccion: string): void {
@@ -55,6 +56,7 @@ export class AdministrativeComponent {
 
   toggleMenu(): void {
     this.mostrarMenu = !this.mostrarMenu;
+    
   }
 
   // Logica para cargar los combos desde el backend
@@ -127,6 +129,7 @@ export class AdministrativeComponent {
         alert('Menú creado correctamente');
         // Limpiar el formulario después de crear el menú
         this.nuevoMenu = { nombre: '', descripcion: '', precio: 0 };
+        this.cargarCombosDesdeBackend(); //para cargar los combos desde el backend
       },
       error: (err) => {
         console.error('Error al crear el menú:', err);
