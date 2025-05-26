@@ -13,15 +13,15 @@
             <div class="price-container">
               <div class="price-item">
                 <h5 class="text-subtitulo">Almuerzo</h5>
-                <h6 class="textInfo" [(ngModel)]="this.purchase.valorDiario" name="valorDiario">{{purchase.valorDiario}}</h6>
+                <h6 class="textInfo"  name="valorDiario" [(ngModel)]="this.purchase.valorDiario">{{purchase.valorDiario}}</h6>
               </div>
               <div class="price-item">
                 <h5 class="text-subtitulo">Cena</h5>
-                <h6 class="textInfo" [(ngModel)]="this.purchase.valorCena" name="valorCena">{{purchase.valorCena}}</h6>
+                <h6 class="textInfo"  name="valorCena" [(ngModel)]="this.purchase.valorCena">{{purchase.valorCena}}</h6>
               </div>
               <div class="price-item">
                 <h5 class="text-subtitulo">Mensual</h5>
-                <h6 class="textInfo" [(ngModel)]="this.purchase.valorMensual" name="valorMensual">{{purchase.valorMensual}}</h6>
+                <h6 class="textInfo"  name="valorMensual" [(ngModel)]="this.purchase.valorMensual">{{purchase.valorMensual}}</h6>
               </div>
             </div>
 
@@ -59,9 +59,11 @@
                 <p class="textInfo">Aquí van tus notificaciones.</p>
             </div>
 
-            <button class="btn_lunch me-2" type="button" id="qrs">
-              <!-- Aquí va el icono del nuevo botón -->
+            <button class="btn_lunch me-2" type="button" id="qrs" (click)="obtenerCodigoQR()">
+                 <!-- Aquí va el icono del nuevo botón -->
             </button>
+
+            
 
             <button class="btn_lunch" type="button" id="profileButton">
                 <!-- <img src="Images/foto perfil.png" alt="Perfil" style="width: 40px; height: auto;"> -->

@@ -7,6 +7,8 @@ import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { Buy } from '../buy';
 import { BuyService } from '../buy.service';
+import { HttpClient } from '@angular/common/http';
+
 
 @Component({
   selector: 'app-lobby',
@@ -22,12 +24,15 @@ export class LobbyComponent implements OnInit, AfterViewInit {
   isChecked1: boolean = false;
   isChecked2: boolean = false;
   currentDate: Date = new Date();
+  // Contador para el QR
+  contador_qr: number = 1;
   constructor(
     private renderer: Renderer2,
     private purchaseValueService: PurchaseValueService,
     private router: Router,
     private authService: AuthService,
     private buyService: BuyService,
+    private http: HttpClient,
     @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
@@ -226,6 +231,8 @@ export class LobbyComponent implements OnInit, AfterViewInit {
     this.buy.value = this.purchase.valorDiario;
     this.buyService.registrarCompra(this.buy).subscribe(Response => {
       console.log('Compra registrada:', Response);
+      //  incrementar el contador automáticamente despues de una compra:
+      this.contador_qr++;
     }, error => {
       console.error('Error al registrar compra:', error);
     })
@@ -242,4 +249,33 @@ export class LobbyComponent implements OnInit, AfterViewInit {
     }
     console.log(`Checkbox ${checkBoxNumber} está:`, checkbox.checked);
   }
+
+
+  //logica para monstrar qr
+  obtenerCodigoQR() {
+  const base_url = 'http://localhost/api/qrcode/' + this.contador_qr;
+  
+  this.http.get(base_url, { responseType: 'blob' }).subscribe(
+    (respuesta) => {
+      console.log('Respuesta:', respuesta);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64data = reader.result;
+        console.log('Imagen en Base64:', base64data);
+      };
+      reader.readAsDataURL(respuesta);
+    },
+    (error) => {
+      console.error('Error al obtener el QR:', error);
+    }
+  );
+}
+
+
+
+
+
+
+
 }
