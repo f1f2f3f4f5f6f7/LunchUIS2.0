@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class MenuService {
 
-  private apiUrl = 'http://localhost/api/combos';
+  private apiUrl = '/api/combos';
 
   constructor(private http: HttpClient) { }
 

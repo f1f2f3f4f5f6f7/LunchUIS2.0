@@ -7,7 +7,7 @@ import { Observable, tap } from 'rxjs';
   providedIn: 'root'
 })
 export class PurchaseValueService {
-  private basedURL = 'http://localhost/api/purchase-value';
+  private basedURL = '/api/purchase-value';
   constructor(private httpClient: HttpClient) { }
   consultarValores(): Observable<PurchaseValue> {
     return this.httpClient.get<PurchaseValue>(`${this.basedURL}/1`).pipe(
