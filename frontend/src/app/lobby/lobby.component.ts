@@ -24,6 +24,10 @@ export class LobbyComponent implements OnInit, AfterViewInit {
   isChecked1: boolean = false;
   isChecked2: boolean = false;
   currentDate: Date = new Date();
+  //hora actual
+  horaActual: string = '';
+  //Contador del combo
+  comboId: number = 1;
   // Contador para el QR
   contador_qr: number = 1;
   constructor(
@@ -168,15 +172,19 @@ export class LobbyComponent implements OnInit, AfterViewInit {
     if (hora) hora.style.transform = `rotate(${horasGrados}deg)`;
   }
 
-  private actualizarHoraDigital(): void {
-    const ahora = new Date();
-    const horas = String(ahora.getHours()).padStart(2, '0');
-    const minutos = String(ahora.getMinutes()).padStart(2, '0');
-    const segundos = String(ahora.getSeconds()).padStart(2, '0');
+ private actualizarHoraDigital(): void {
+  const ahora = new Date();
+  const horas = String(ahora.getHours()).padStart(2, '0');
+  const minutos = String(ahora.getMinutes()).padStart(2, '0');
+  const segundos = String(ahora.getSeconds()).padStart(2, '0');
 
-    const horaDigital = document.getElementById('horaDigital');
-    if (horaDigital) horaDigital.textContent = `${horas}:${minutos}:${segundos}`;
-  }
+  // Actualiza la propiedad para usarla en registrarCompra()
+  this.horaActual = `${horas}:${minutos}:${segundos}`;
+
+  const horaDigital = document.getElementById('horaDigital');
+  if (horaDigital) horaDigital.textContent = this.horaActual;
+}
+
 
   private showModal(title: string, message: string): void {
     const modalOverlay = document.getElementById('modalOverlay');
@@ -222,22 +230,33 @@ export class LobbyComponent implements OnInit, AfterViewInit {
     return `${year}-${month}-${day}`;
   }
   registrarCompra(): void {
-    console.log(this.buy)
-    this.buy.user = this.user;
-    this.buy.dinner = false;
-    this.buy.lunch = this.isChecked1;
-    this.buy.monthly = !this.isChecked2;
-    this.buy.date = this.formatDate(this.currentDate);
-    this.buy.value = this.purchase.valorDiario;
-    this.buyService.registrarCompra(this.buy).subscribe(Response => {
-      console.log('Compra registrada:', Response);
-      //  incrementar el contador automáticamente despues de una compra:
-      this.contador_qr++;
-    }, error => {
-      console.error('Error al registrar compra:', error);
-    })
+  const nuevaCompra: Buy = {
+    date: this.formatDate(this.currentDate),
+    hour: this.horaActual,  // puedes poner la hora actual si quieres con new Date().toLocaleTimeString(), o ponerla fija
+    dinner: false,
+    lunch: this.isChecked1,
+    monthly: false,
+    user: { id: this.user.id },  // asegúrate que user tenga el id
+    combo: { id: this.comboId }             // id del combo que quieres
+  };
 
-  }
+  this.buyService.registrarCompra(nuevaCompra).subscribe(response => {
+    console.log('Compra registrada:', response);
+    this.contador_qr++;
+
+     //Incrementa el comboId para la próxima compra
+    this.comboId++;
+
+    // Imprime los valores actuales
+    console.log('Nuevo valor de comboId:', this.comboId);
+    console.log('Nuevo valor de contador_qr:', this.contador_qr);
+    
+  }, error => {
+    console.error('Error al registrar compra:', error);
+  });
+}
+
+
 
   onCheckboxChange(event: Event, checkBoxNumber: number): void {
     const checkbox = event.target as HTMLInputElement;
