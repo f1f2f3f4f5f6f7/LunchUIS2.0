@@ -1,9 +1,12 @@
+import { OnInit, AfterViewInit, Renderer2, Inject, PLATFORM_ID } from '@angular/core';
 import { Component } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { PurchaseValue } from '../purchase-value';
 import { PurchaseValueService } from '../purchase-value.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { MenuService } from '../menu.service.spec';
+import { Usuario } from '../usuario';
 
 @Component({
   selector: 'app-administrative',
@@ -11,12 +14,14 @@ import { MenuService } from '../menu.service.spec';
   styleUrls: ['./administrative.component.css'],
   standalone: false
 })
-export class AdministrativeComponent {
+export class AdministrativeComponent implements OnInit, AfterViewInit{
+  private activeContainer: HTMLElement | null = null;
   purchase: PurchaseValue | null = null;
   cantidadDia: number = 0;
   cantidadCena: number = 0;
   cantidadMes: number = 0;
 
+  user!: Usuario;
   seccionVisible: string = 'cupos';
 
   // Menús
@@ -38,16 +43,87 @@ export class AdministrativeComponent {
   };
 
   constructor(
+    private renderer: Renderer2,
     private menuService: MenuService,
     private purchaseValueService: PurchaseValueService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
-  ngOnInit() {
-    this.obtenerDefaultValuesLocalStorage();
-    this.cargarCombosDesdeBackend(); //para cargar los combos desde el backend
+  ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.cargarCombosDesdeBackend(); //para cargar los combos desde el backend
+      this.obtenerUsuarioDeLocalStorage();
+      this.obtenerDefaultValuesLocalStorage();
+    }
+  }
 
+  ngAfterViewInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.setupEventListeners();
+    }
+  }
+
+  private setupEventListeners(): void {
+    const btnToggle = document.getElementById('toggleButton');
+    const btnNotification = document.getElementById('notificationButton');
+    const btnProfile = document.getElementById('profileButton');
+    const infoContainer = document.getElementById('infoContainer');
+    const notificationContainer = document.getElementById('notificationContainer');
+    const profileContainer = document.getElementById('profileContainer');
+    const btnCerrarSesion = document.getElementById('btnCerrarSesion');
+
+    if (btnToggle) this.renderer.listen(btnToggle, 'click', (event) => {
+      if (infoContainer) this.toggleContainer(event, infoContainer);
+    });
+    if (btnNotification) this.renderer.listen(btnNotification, 'click', (event) => {
+      if (notificationContainer) this.toggleContainer(event, notificationContainer);
+    });
+    if (btnProfile) this.renderer.listen(btnProfile, 'click', (event) => {
+      if (profileContainer) this.toggleContainer(event, profileContainer);
+    });
+
+    this.renderer.listen(document, 'click', () => this.closeActiveContainer());
+    if (infoContainer) this.renderer.listen(infoContainer, 'click', (event) => event.stopPropagation());
+    if (notificationContainer) this.renderer.listen(notificationContainer, 'click', (event) => event.stopPropagation());
+    if (profileContainer) this.renderer.listen(profileContainer, 'click', (event) => event.stopPropagation());
+
+    if (btnCerrarSesion) this.renderer.listen(btnCerrarSesion, 'click', () => this.showModal('Comprar Combo', 'Aquí puedes proceder con la compra del combo.'));
+
+    const lunchUIS = document.getElementById('lunchUIS');
+    if (lunchUIS) lunchUIS.addEventListener('click', () => location.reload());
+  }
+
+  private showModal(title: string, message: string): void {
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalMessage = document.getElementById('modalMessage');
+
+    if (modalTitle) modalTitle.textContent = title;
+    if (modalMessage) modalMessage.textContent = message;
+    if (modalOverlay) modalOverlay.style.display = 'flex';
+  }
+
+  private toggleContainer(event: MouseEvent, container: HTMLElement): void {
+    event.stopPropagation();
+    if (this.activeContainer && this.activeContainer !== container) {
+      this.closeActiveContainer();
+    }
+
+    if (container.style.display === 'none' || container.style.display === '') {
+      container.style.display = 'block';
+      this.activeContainer = container;
+    } else {
+      this.closeActiveContainer();
+    }
+  }
+
+  private closeActiveContainer(): void {
+    if (this.activeContainer) {
+      this.activeContainer.style.display = 'none';
+      this.activeContainer = null;
+    }
   }
 
   mostrarSeccion(seccion: string): void {
@@ -180,6 +256,16 @@ export class AdministrativeComponent {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  obtenerUsuarioDeLocalStorage(): void {
+    const usuarioString = localStorage.getItem('usuarioRegistrado');
+    if (usuarioString) {
+      this.user = JSON.parse(usuarioString);
+      console.log('Usuario cargado desde localStorage:', this.user);
+    } else {
+      console.log('No se encontró usuario en localStorage');
+    }
   }
 }
 
